@@ -8,8 +8,13 @@ services:
       VESPA_PORT: 8080
       VESPA_ADMIN_PORT: 19071
     expose:
-      - "8080"     # Vespa HTTP API (Exposed internally)
-      - "19071"    # Vespa Admin API (Exposed internally)
+      - "8080"     # Vespa HTTP API (Internal Only)
+      - "19071"    # Vespa Admin API (Internal Only)
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/ApplicationStatus"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     volumes:
       - vespa_data:/opt/vespa/var
       - vespa_logs:/opt/vespa/logs
