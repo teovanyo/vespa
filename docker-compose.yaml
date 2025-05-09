@@ -8,8 +8,8 @@ services:
       VESPA_PORT: 8080
       VESPA_ADMIN_PORT: 19071
     expose:
-      - "8080"     # Vespa HTTP API (Internal Only)
-      - "19071"    # Vespa Admin API (Internal Only)
+      - "8080"     # Vespa HTTP API (Exposed internally)
+      - "19071"    # Vespa Admin API (Exposed internally)
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/ApplicationStatus"]
       interval: 30s
@@ -19,6 +19,18 @@ services:
       - vespa_data:/opt/vespa/var
       - vespa_logs:/opt/vespa/logs
       - vespa_conf:/opt/vespa/conf
+    restart: always
+
+  nginx:
+    image: nginx:latest
+    container_name: vespa-proxy
+    depends_on:
+      - vespa
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "80:80"
+      - "443:443"
     restart: always
 
 volumes:
